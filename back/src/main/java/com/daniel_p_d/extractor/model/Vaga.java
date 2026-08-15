@@ -7,6 +7,11 @@ import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.daniel_p_d.extractor.model.Enums.Modalidade;
+import com.daniel_p_d.extractor.model.Enums.NivelSenioridade;
+import com.daniel_p_d.extractor.model.Enums.Regime;
+import com.daniel_p_d.extractor.model.Enums.StatusVaga;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,9 +31,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(
@@ -39,8 +42,6 @@ import lombok.Setter;
         @Index(name = "idx_vaga_data_publicacao", columnList = "data_publicacao")
     }
 )
-@Getter
-@Setter
 @Builder
 @Data
 @NoArgsConstructor
@@ -76,6 +77,10 @@ public class Vaga {
 
     @Enumerated(EnumType.STRING)
     private Regime regime;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 30)
+    private NivelSenioridade senioridade;
 
     @Column(name = "salario_min",precision = 12, scale = 2)
     private BigDecimal salarioMin;

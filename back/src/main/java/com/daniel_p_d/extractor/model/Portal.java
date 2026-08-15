@@ -2,6 +2,8 @@ package com.daniel_p_d.extractor.model;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -37,12 +39,8 @@ public class Portal {
 
     @Column(name = "seletor_config", columnDefinition = "TEXT")
     private String seletorConfig;
-
+    
+    @CreationTimestamp
     @Column(name = "criado_em", nullable = false, updatable = false)
     private LocalDateTime criadoEm;
-
-    @PrePersist
-    protected void onCreate(){
-        this.criadoEm = LocalDateTime.now();
-    }
 }
