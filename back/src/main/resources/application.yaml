@@ -1,3 +1,7 @@
 spring:
   application:
     name: extractor
+
+jwt:
+  secret: ${JWT_SECRET:7fK9mQ2xL8vN4pR6sT1wY5zC3bH7jD9e}
+  expiration-ms: 86400000

@@ -45,6 +45,10 @@ public class Usuario {
     @Builder.Default
     private PerfilUsuario perfil = PerfilUsuario.USUARIO;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean ativo = true;
+
     @CreationTimestamp
     @Column(name = "criado_em", updatable = false, nullable = false)
     private LocalDateTime criadoEm;
