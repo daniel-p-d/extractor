@@ -9,7 +9,7 @@ import com.daniel_p_d.extractor.model.VagaHabilidade;
 
 public interface VagaHabilidadeRepository extends JpaRepository<VagaHabilidade, Long>{
 
-    List<VagaHabilidade> findByVagaIDd(Long vagaId);
+    List<VagaHabilidade> findByVagaId(Long vagaId);
     List<VagaHabilidade> findByHabilidadeId(Long habilidadeId); 
 
     @Query("""

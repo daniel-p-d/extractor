@@ -9,7 +9,7 @@ import com.daniel_p_d.extractor.model.Portal;
 
 public interface PortalRepository extends JpaRepository<Portal, Long>{
     
-    Optional<Portal> findbyNomeIgnoreCase(String nome);
+    Optional<Portal> findByNomeIgnoreCase(String nome);
 
     List<Portal> findByAtivoTrue();
 }

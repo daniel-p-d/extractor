@@ -16,7 +16,7 @@ import com.daniel_p_d.extractor.model.Enums.StatusVaga;
 
 public interface VagaRepository extends JpaRepository<Vaga, Long>{
 
-    boolean existyByUrl(String url);
+    boolean existsByUrl(String url);
 
     Optional<Vaga> findByUrl(String url);
     Page<Vaga> findByStatus(StatusVaga status, Pageable pageable);

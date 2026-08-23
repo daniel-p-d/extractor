@@ -36,7 +36,7 @@ public class VagaService {
 
     @Transactional
     public ResultadoProcessamento processarVagaColetada(VagaColetada dados, Portal portal){
-        if (vagaRepository.existyByUrl(dados.url())){
+        if (vagaRepository.existsByUrl(dados.url())){
             log.debug("Vaga já existente. {}", dados.url());
 
             Vaga existente = vagaRepository.findByUrl(dados.url()).orElseThrow();

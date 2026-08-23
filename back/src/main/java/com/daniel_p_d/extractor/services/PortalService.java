@@ -15,6 +15,6 @@ public class PortalService {
     private final PortalRepository portalRepository;
 
     public Portal buscaPorNome(String nome){
-        return portalRepository.findbyNomeIgnoreCase(nome).orElseThrow(() -> new PortalException("Portal não cadastrado: " + nome));
+        return portalRepository.findByNomeIgnoreCase(nome).orElseThrow(() -> new PortalException("Portal não cadastrado: " + nome));
     }
 }
