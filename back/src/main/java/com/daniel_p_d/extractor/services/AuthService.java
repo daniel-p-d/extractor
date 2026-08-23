@@ -27,7 +27,7 @@ public class AuthService {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
-    private JwtService jwtService;
+    private final JwtService jwtService;
 
     @Transactional
     public UsuarioResponse cadastro(RegistroRequest request){
