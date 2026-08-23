@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/vagas_db
+    username: vagas_user
+    password: vagas_pass
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 20000
+  jpa:
+    show-sql: true
+
+logging:
+  level:
+    com.daniel_p_d.extractor: DEBUG
+    org.hibernate.SQL: DEBUG

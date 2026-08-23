@@ -1,7 +1,7 @@
 package com.daniel_p_d.extractor.model;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,7 +38,7 @@ public class AnaliseTendencia {
     private Habilidade habilidade;
 
     @Column(name = "periodo_referencia", nullable = false)
-    private LocalDateTime periodoReferencia;
+    private LocalDate periodoReferencia;
 
     @Column(name = "quantidade_mencoes", nullable = false)
     private int quantidadeMencoes;

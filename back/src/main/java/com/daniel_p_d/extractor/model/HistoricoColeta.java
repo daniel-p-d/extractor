@@ -35,7 +35,7 @@ public class HistoricoColeta {
     @Column(name = "iniciado_em", nullable = false)
     private LocalDateTime iniciadoEm;
 
-    @Column(name = "finalzado_em")
+    @Column(name = "finalizado_em")
     private LocalDateTime finalizadoEm;
 
     @Column(name = "vagas_encontradas")

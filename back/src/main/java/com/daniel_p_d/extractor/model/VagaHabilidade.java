@@ -16,7 +16,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "habilidades", uniqueConstraints = @UniqueConstraint(columnNames = "nome"))
+@Table(name = "vaga_habilidade", uniqueConstraints = @UniqueConstraint(columnNames = "vaga_id"))
 @Builder
 @Data
 @NoArgsConstructor

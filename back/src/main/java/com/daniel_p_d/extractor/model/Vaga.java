@@ -2,6 +2,7 @@ package com.daniel_p_d.extractor.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(
-    name = "vaga",
+    name = "vagas",
     uniqueConstraints = @UniqueConstraint(columnNames = "url"),
     indexes = {
         @Index(name = "idx_vaga_status", columnList = "status"),
@@ -58,15 +59,15 @@ public class Vaga {
     @Column(name = "url", nullable = false, unique = true, length = 1000)
     private String url;
 
-    @Column(name = "descricao", columnDefinition = "TEXT")
+    @Column(name = "descricao_bruta", columnDefinition = "TEXT")
     private String descricao;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "portal_id", nullable = false)
-    private Portal Portal;
+    private Portal portal;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "empresa_id", nullable = false)
+    @JoinColumn(name = "empresa_id")
     private Empresa empresa;
 
     @Column(length = 255)
@@ -93,7 +94,7 @@ public class Vaga {
 
     @CreationTimestamp
     @Column(name = "extraido_em", nullable = false, updatable = false)
-    private LocalDate extraidoEm;
+    private LocalDateTime extraidoEm;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
