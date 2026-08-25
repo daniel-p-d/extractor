@@ -34,6 +34,7 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/coleta/**").permitAll() 
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/analises/**").hasAllRoles("ADMIN")
                 .anyRequest().authenticated()
