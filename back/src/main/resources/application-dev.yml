@@ -10,6 +10,17 @@ spring:
       connection-timeout: 20000
   jpa:
     show-sql: true
+  mail:
+    host: sandbox.smtp.mailtrap.io
+    port: 2525
+    username: ${MAILTRAP_USER}
+    password: ${MAILTRAP_PASS}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 logging:
   level:

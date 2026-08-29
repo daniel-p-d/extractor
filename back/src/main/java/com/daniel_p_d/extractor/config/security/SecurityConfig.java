@@ -35,6 +35,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/coleta/**").permitAll() 
+                .requestMatchers("/alertas/**").authenticated() 
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/analises/**").hasAllRoles("ADMIN")
                 .anyRequest().authenticated()

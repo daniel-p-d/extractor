@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.daniel_p_d.extractor.analysis.config.MapaApelidosHabilidade;
 import com.daniel_p_d.extractor.analysis.model.HabilidadeDetectada;
 import com.daniel_p_d.extractor.model.Habilidade;
 import com.daniel_p_d.extractor.repository.HabilidadeRepository;
@@ -20,12 +21,12 @@ import java.util.regex.Pattern;
 public class ExtratorHabilidadeService {
 
     private final HabilidadeRepository habilidadeRepository;
+    private final MapaApelidosHabilidade mapaApelidos;
 
     private volatile List<PadraoBusca> padroesDeBusca = Collections.emptyList();
 
-    private record PadraoBusca(Pattern pattern, Habilidade habilidade) {}
+    private record PadraoBusca(Pattern pattern, Habilidade habilidade, String textoPadrao) {}
 
-    // palavras para possiveis diferencias
     private static final List<String> PALAVRAS_DIFERENCIAL = List.of(
         "diferencial", "desejável", "desejavel", "será um plus", "plus", "bônus", "bonus"
     );
@@ -34,72 +35,91 @@ public class ExtratorHabilidadeService {
     public void carregarListaDeSkills() {
         List<Habilidade> todasAsSkills = habilidadeRepository.findAll();
 
-        List<PadraoBusca> novaLista = todasAsSkills.stream()
-            .sorted(Comparator.comparingInt((Habilidade h) -> h.getNome().length()).reversed())
-            .map(h -> new PadraoBusca(criarPadraoDeBusca(h.getNome()), h))
-            .toList();
+        List<PadraoBusca> novaLista = new ArrayList<>();
+
+        for (Habilidade h : todasAsSkills) {
+            //nome oficial da habilidade
+            novaLista.add(new PadraoBusca(criarPadraoDeBusca(h.getNome()), h, h.getNome()));
+
+            // variacoes cadastrados no MapaApelidosHabilidade
+            for (String apelido : mapaApelidos.apelidosPara(h.getNome())) {
+                novaLista.add(new PadraoBusca(criarPadraoDeBusca(apelido), h, apelido));
+            }
+        }
+
+        novaLista.sort(Comparator.comparingInt((PadraoBusca p) -> p.textoPadrao().length()).reversed());
 
         this.padroesDeBusca = novaLista;
-        log.info("Lista de skills carregada: {} habilidades", novaLista.size());
+        log.info("Lista de skills carregada: {} padrões de busca ({} habilidades)", novaLista.size(), todasAsSkills.size());
     }
 
-     // recarrega a lista
     @Scheduled(fixedRateString = "${habilidades.cache.refresh-ms:3600000}")
     public void recarregarPeriodicamente() {
         carregarListaDeSkills();
     }
 
-    // evitar erro na busca
-    private Pattern criarPadraoDeBusca(String nomeDaSkill) {
-        String nomeEscapado = Pattern.quote(nomeDaSkill);
-        return Pattern.compile("\\b" + nomeEscapado + "\\b", Pattern.CASE_INSENSITIVE);
+    private Pattern criarPadraoDeBusca(String texto) {
+        String textoEscapado = Pattern.quote(texto);
+        return Pattern.compile("\\b" + textoEscapado + "\\b", Pattern.CASE_INSENSITIVE);
     }
 
-    // extração das vagas normal
     public Set<Habilidade> extrairHabilidades(String descricaoDaVaga) {
         return extrairComDetalhes(descricaoDaVaga).stream()
             .map(HabilidadeDetectada::habilidade)
             .collect(java.util.stream.Collectors.toCollection(LinkedHashSet::new));
     }
 
-    // extração das vagas normal com quantidade e diferencial
     public List<HabilidadeDetectada> extrairComDetalhes(String descricaoDaVaga) {
         if (descricaoDaVaga == null || descricaoDaVaga.isBlank()) {
             return Collections.emptyList();
         }
+        Map<Habilidade, Integer> contagemPorHabilidade = new LinkedHashMap<>();
+        Map<Habilidade, Boolean> diferencialPorHabilidade = new HashMap<>();
 
-        List<HabilidadeDetectada> resultado = new ArrayList<>();
+        List<int[]> intervalosJaCasados = new ArrayList<>();
 
         for (PadraoBusca padrao : padroesDeBusca) {
             Matcher matcher = padrao.pattern().matcher(descricaoDaVaga);
 
-            int quantidadeMencoes = 0;
-            boolean pareceDiferencial = false;
-
             while (matcher.find()) {
-                quantidadeMencoes++;
+                int inicio = matcher.start();
+                int fim = matcher.end();
 
-                // verifica o texto proximo a posição encontrada
-                int inicioTrecho = Math.max(0, matcher.start() - 50);
-                String trechoAoRedor = descricaoDaVaga.substring(inicioTrecho, matcher.start()).toLowerCase();
+                if (sobrepoeIntervaloExistente(inicio, fim, intervalosJaCasados)) {
+                    continue;
+                }
 
-                boolean temPalavraDiferencial = PALAVRAS_DIFERENCIAL.stream()
-                    .anyMatch(trechoAoRedor::contains);
+                intervalosJaCasados.add(new int[]{inicio, fim});
+
+                contagemPorHabilidade.merge(padrao.habilidade(), 1, Integer::sum);
+
+                int inicioTrecho = Math.max(0, inicio - 50);
+                String trechoAoRedor = descricaoDaVaga.substring(inicioTrecho, inicio).toLowerCase();
+                boolean temPalavraDiferencial = PALAVRAS_DIFERENCIAL.stream().anyMatch(trechoAoRedor::contains);
 
                 if (temPalavraDiferencial) {
-                    pareceDiferencial = true;
+                    diferencialPorHabilidade.put(padrao.habilidade(), true);
                 }
-            }
-
-            if (quantidadeMencoes > 0) {
-                resultado.add(new HabilidadeDetectada(
-                    padrao.habilidade(),
-                    quantidadeMencoes,
-                    pareceDiferencial
-                ));
             }
         }
 
+        List<HabilidadeDetectada> resultado = new ArrayList<>();
+        for (var entry : contagemPorHabilidade.entrySet()) {
+            resultado.add(new HabilidadeDetectada(
+                entry.getKey(),
+                entry.getValue(),
+                diferencialPorHabilidade.getOrDefault(entry.getKey(), false)
+            ));
+        }
+
         return resultado;
+    }
+
+    private boolean sobrepoeIntervaloExistente(int inicio, int fim, List<int[]> intervalos) {
+        for (int[] intervalo : intervalos) {
+            boolean sobrepoe = inicio < intervalo[1] && fim > intervalo[0];
+            if (sobrepoe) return true;
+        }
+        return false;
     }
 }
