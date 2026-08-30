@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.daniel_p_d.extractor.scrapper.portais.CathoScraper;
 import com.daniel_p_d.extractor.scrapper.portais.InfoJobsScraper;
 import com.daniel_p_d.extractor.services.ExecutorColetaService;
 
@@ -16,10 +17,17 @@ public class ColetaTesteController {
 
     private final ExecutorColetaService executorColetaService;
     private final InfoJobsScraper infoJobsScraper;
+    private final CathoScraper  cathoScraper;
 
     @PostMapping("/infojobs")
     public String executarInfoJobs() {
         executorColetaService.executar(infoJobsScraper);
-        return "Coleta iniciada, confira os logs";
+        return "InfoJobs - Coleta iniciada, confira os logs";
+    }
+
+    @PostMapping("/catho")
+    public String executarCatho() {
+        executorColetaService.executar(cathoScraper);
+        return "Catho - Coleta iniciada, confira os logs";
     }
 }
