@@ -59,12 +59,11 @@ public class ExecutorColetaService {
 
             notificacaoService.notificarSobreVagasNovas(vagasNovasComHabilidades);
 
-            log.info("Coleta finalizada: {} encontradas, {} novas, {} com erro",
-                vagasColetadas.size(), novas, comErro);
+            log.info("{} - Coleta finalizada: {} encontradas, {} novas, {} com erro", scraper.nomePortal(), vagasColetadas.size(), novas, comErro);
 
         } catch (Exception e) {
             historicoColetaService.finalizarComErro(historico, e.getMessage());
-            log.error("Coleta falhou completamente: {}", e.getMessage(), e);
+            log.error("{} - Coleta falhou completamente: {}", scraper.nomePortal(), e.getMessage(), e);
         }
     }
 
