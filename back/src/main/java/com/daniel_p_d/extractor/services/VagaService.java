@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 
 import com.daniel_p_d.extractor.analysis.ExtratorHabilidadeService;
 import com.daniel_p_d.extractor.dto.request.VagaColetada;
+import com.daniel_p_d.extractor.model.Categoria;
 import com.daniel_p_d.extractor.model.Empresa;
 import com.daniel_p_d.extractor.model.Habilidade;
 import com.daniel_p_d.extractor.model.Portal;
@@ -35,14 +36,13 @@ public class VagaService {
     public record ResultadoProcessamento(boolean novaVaga, Vaga vaga) {}
 
     @Transactional
-    public ResultadoProcessamento processarVagaColetada(VagaColetada dados, Portal portal){
-        if (vagaRepository.existsByUrl(dados.url())){
-            log.debug("Vaga já existente. {}", dados.url());
+    public ResultadoProcessamento processarVagaColetada(VagaColetada dados, Portal portal, Categoria categoria) {
 
+        if (vagaRepository.existsByUrl(dados.url())) {
             Vaga existente = vagaRepository.findByUrl(dados.url()).orElseThrow();
             return new ResultadoProcessamento(false, existente);
         }
-        
+
         Empresa empresa = empresaService.resolverOuCriar(dados.nomeEmpresa());
 
         Vaga vaga = Vaga.builder()
@@ -51,6 +51,7 @@ public class VagaService {
             .descricao(dados.descricaoBruta())
             .portal(portal)
             .empresa(empresa)
+            .categoria(categoria)
             .localizacao(dados.localizacao())
             .modalidade(conversorEnumService.converterModalidade(dados.modalidadeTexto()))
             .regime(conversorEnumService.converterRegime(dados.regimeTexto()))
@@ -64,7 +65,6 @@ public class VagaService {
         vaga = vagaRepository.save(vaga);
         associarHabilidades(vaga);
 
-        log.info("Vaga persistida: {} ({})", vaga.getTitulo(), vaga.getUrl());
         return new ResultadoProcessamento(true, vaga);
     }
 

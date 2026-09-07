@@ -1,5 +1,7 @@
 package com.daniel_p_d.extractor.scrapper.portais;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import com.daniel_p_d.extractor.config.JsoupConnector;
 import com.daniel_p_d.extractor.dto.request.VagaColetada;
+import com.daniel_p_d.extractor.model.Categoria;
 import com.daniel_p_d.extractor.scrapper.ScraperClient;
 
 import lombok.RequiredArgsConstructor;
@@ -41,13 +44,16 @@ public class InfoJobsScraper implements ScraperClient{
     }
 
     @Override
-    public List<VagaColetada> coletar() {
+    public List<VagaColetada> coletar(Categoria categoria) {
         List<VagaColetada> resultado = new ArrayList<>();
 
-        Document pagina = jsoupConnector.buscarDocumento(URL_BUSCA);
+        String urlBusca = DOMINIO + "/empregos.aspx?palabra=" +
+            URLEncoder.encode(categoria.getTermoBusca(), StandardCharsets.UTF_8);
+
+        Document pagina = jsoupConnector.buscarDocumento(urlBusca);
         Elements cardsDeVaga = pagina.select("div.js_rowCard");
 
-        log.info("InfoJobs: {} vagas encontradas na página de listagem", cardsDeVaga.size());
+        log.info("InfoJobs [{}]: {} vagas encontradas na página de listagem", categoria.getNome(), cardsDeVaga.size());
 
         for (Element card : cardsDeVaga) {
             try {
@@ -64,7 +70,7 @@ public class InfoJobsScraper implements ScraperClient{
             }
         }
 
-        return resultado;
+    return resultado;
     }
 
     private VagaColetada extrairVagaDoCard(Element card) {

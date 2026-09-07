@@ -8,6 +8,7 @@ import java.util.Set;
 import org.springframework.stereotype.Service;
 
 import com.daniel_p_d.extractor.dto.request.VagaColetada;
+import com.daniel_p_d.extractor.model.Categoria;
 import com.daniel_p_d.extractor.model.Habilidade;
 import com.daniel_p_d.extractor.model.HistoricoColeta;
 import com.daniel_p_d.extractor.model.Portal;
@@ -30,40 +31,39 @@ public class ExecutorColetaService {
     private final NotificacaoService notificacaoService;
     private final VagaHabilidadeRepository vagaHabilidadeRepository;
 
-    public void executar(ScraperClient scraper) {
+    public void executar(ScraperClient scraper, Categoria categoria) {
         Portal portal = portalService.buscaPorNome(scraper.nomePortal());
         HistoricoColeta historico = historicoColetaService.iniciarColeta(portal);
 
         int novas = 0;
         int comErro = 0;
-
         Map<Vaga, Set<Habilidade>> vagasNovasComHabilidades = new HashMap<>();
 
         try {
-            List<VagaColetada> vagasColetadas = scraper.coletar();
+            List<VagaColetada> vagasColetadas = scraper.coletar(categoria);
 
             for (VagaColetada dados : vagasColetadas) {
                 try {
-                    var resultado = vagaService.processarVagaColetada(dados, portal);
+                    var resultado = vagaService.processarVagaColetada(dados, portal, categoria);
                     if (resultado.novaVaga()) {
                         novas++;
                         vagasNovasComHabilidades.put(resultado.vaga(), extrairHabilidadesDaVaga(resultado.vaga()));
                     }
                 } catch (Exception e) {
-                    log.error("Erro ao processar vaga individual: {}", e.getMessage());
+                    log.error("{} [{}] - Erro ao processar vaga individual: {}", scraper.nomePortal(), categoria.getNome(), e.getMessage());
                     comErro++;
                 }
             }
 
             historicoColetaService.finalizarComSucesso(historico, vagasColetadas.size(), novas, comErro);
-
             notificacaoService.notificarSobreVagasNovas(vagasNovasComHabilidades);
 
-            log.info("{} - Coleta finalizada: {} encontradas, {} novas, {} com erro", scraper.nomePortal(), vagasColetadas.size(), novas, comErro);
+            log.info("{} [{}] - Coleta finalizada: {} encontradas, {} novas, {} com erro",
+                scraper.nomePortal(), categoria.getNome(), vagasColetadas.size(), novas, comErro);
 
         } catch (Exception e) {
             historicoColetaService.finalizarComErro(historico, e.getMessage());
-            log.error("{} - Coleta falhou completamente: {}", scraper.nomePortal(), e.getMessage(), e);
+            log.error("{} [{}] - Coleta falhou completamente: {}", scraper.nomePortal(), categoria.getNome(), e.getMessage(), e);
         }
     }
 

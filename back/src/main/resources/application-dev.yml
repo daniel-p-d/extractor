@@ -29,12 +29,8 @@ scraper:
     delay-ms: 2000
 
 scheduler:
-  infojobs:
+  coleta:
     cron: "0 */5 * * * *"
-  catho:
-    cron: "30 */5 * * * *"
-  vagascom:
-    cron: "45 */5 * * * *" 
 
 logging:
   level:

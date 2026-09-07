@@ -96,6 +96,10 @@ public class Vaga {
     @Column(name = "extraido_em", nullable = false, updatable = false)
     private LocalDateTime extraidoEm;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "categoria_id")
+    private Categoria categoria;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     @Builder.Default

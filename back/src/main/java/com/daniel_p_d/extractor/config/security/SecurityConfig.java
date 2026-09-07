@@ -38,6 +38,8 @@ public class SecurityConfig {
                 .requestMatchers("/alertas/**").authenticated() 
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/analises/**").hasAllRoles("ADMIN")
+                .requestMatchers("/categorias/**").permitAll()
+                .requestMatchers("/preferencias/**").authenticated()
                 .anyRequest().authenticated()
             )
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

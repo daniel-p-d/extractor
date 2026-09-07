@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.daniel_p_d.extractor.dto.request.VagaColetada;
+import com.daniel_p_d.extractor.model.Categoria;
 import com.daniel_p_d.extractor.scrapper.ScraperClient;
 
 import lombok.RequiredArgsConstructor;
@@ -48,11 +49,13 @@ public class CathoScraper implements ScraperClient{
     }
 
     @Override
-    public List<VagaColetada> coletar() {
+    public List<VagaColetada> coletar(Categoria categoria) {
         List<VagaColetada> resultado = new ArrayList<>();
 
-        List<String> idsDeVagas = coletarIdsDaListagem();
-        log.info("Catho: {} IDs de vaga encontrados na listagem", idsDeVagas.size());
+        String urlBusca = DOMINIO + "/vagas/" + categoria.getTermoBusca() + "/";
+
+        List<String> idsDeVagas = coletarIdsDaListagem(urlBusca);
+        log.info("Catho [{}]: {} IDs de vaga encontrados na listagem", categoria.getNome(), idsDeVagas.size());
 
         for (String id : idsDeVagas) {
             try {
@@ -69,11 +72,11 @@ public class CathoScraper implements ScraperClient{
         return resultado;
     }
 
-    private List<String> coletarIdsDaListagem() {
+    private List<String> coletarIdsDaListagem(String urlBusca) {
         List<String> ids = new ArrayList<>();
 
         try {
-            Document pagina = Jsoup.connect(URL_BUSCA)
+            Document pagina = Jsoup.connect(urlBusca)
                 .userAgent(USER_AGENT)
                 .timeout(15000)
                 .get();
@@ -93,6 +96,7 @@ public class CathoScraper implements ScraperClient{
 
         return ids;
     }
+
 
     private VagaColetada buscarDetalheDaVaga(String idVaga) throws Exception {
         String url = String.format(URL_API_DETALHE, idVaga);

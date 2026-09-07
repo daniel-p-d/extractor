@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.daniel_p_d.extractor.dto.request.VagaColetada;
+import com.daniel_p_d.extractor.model.Categoria;
 import com.daniel_p_d.extractor.scrapper.ScraperClient;
 
 import lombok.RequiredArgsConstructor;
@@ -47,17 +48,19 @@ public class VagasComScraper implements ScraperClient{
     }
 
     @Override
-    public List<VagaColetada> coletar() {
+    public List<VagaColetada> coletar(Categoria categoria) {
         List<VagaColetada> resultado = new ArrayList<>();
 
+        String urlBusca = DOMINIO + "/vagas-de-" + categoria.getTermoBusca();
+
         try {
-            Document pagina = Jsoup.connect(URL_BUSCA)
+            Document pagina = Jsoup.connect(urlBusca)
                 .userAgent(USER_AGENT)
                 .timeout(15000)
                 .get();
 
             Elements cards = pagina.select("li.vaga");
-            log.info("Vagas.com: {} vagas encontradas na página de listagem", cards.size());
+            log.info("Vagas.com [{}]: {} vagas encontradas na página de listagem", categoria.getNome(), cards.size());
 
             for (Element card : cards) {
                 try {
