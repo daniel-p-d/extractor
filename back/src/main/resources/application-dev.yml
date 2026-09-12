@@ -30,7 +30,7 @@ scraper:
 
 scheduler:
   coleta:
-    cron: "0 */5 * * * *"
+    cron: "0 0 6 * * *"
 
 logging:
   level:

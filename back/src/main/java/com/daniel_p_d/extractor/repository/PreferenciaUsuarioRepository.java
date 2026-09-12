@@ -10,4 +10,5 @@ public interface PreferenciaUsuarioRepository extends JpaRepository<PreferenciaU
     List<PreferenciaUsuario> findByUsuarioId(Long usuarioId);
 
     boolean existsByUsuarioIdAndCategoriaId(Long usuarioId, Long categoriaId);
+    List<PreferenciaUsuario> findByAtivaTrueAndCategoriaIdIn(List<Long> categoriaIds);
 }
