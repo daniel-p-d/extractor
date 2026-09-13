@@ -21,7 +21,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(
     name = "analise_tendencia",
-    indexes = @Index(name = "idx_analise_periodo", columnList = "periodo_referencia")
+    indexes = {
+        @Index(name = "idx_analise_periodo", columnList = "periodo_referencia"),
+        @Index(name = "idx_analise_categoria", columnList = "categoria_id")
+    }
 )
 @Data
 @Builder
@@ -37,6 +40,10 @@ public class AnaliseTendencia {
     @JoinColumn(name = "habilidade_id", nullable = false)
     private Habilidade habilidade;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "categoria_id", nullable = false) 
+    private Categoria categoria;
+
     @Column(name = "periodo_referencia", nullable = false)
     private LocalDate periodoReferencia;
 
@@ -49,6 +56,6 @@ public class AnaliseTendencia {
     @Column(name = "variacao_percentual", precision = 6, scale = 2)
     private BigDecimal variacaoPercentual;
 
-    @Column(length = 255)
-    private String localizacao;
+    /*@Column(length = 255)
+    private String localizacao;*/
 }

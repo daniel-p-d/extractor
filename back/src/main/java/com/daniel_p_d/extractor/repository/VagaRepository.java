@@ -33,4 +33,6 @@ public interface VagaRepository extends JpaRepository<Vaga, Long>{
     );
 
     long countByPortalIdAndDataPublicacaoBetween(Long portalId, LocalDate inicio, LocalDate fim);
+
+    long countByCategoriaIdAndDataPublicacaoBetween(Long categoriaId, LocalDate inicio, LocalDate fim);
 }

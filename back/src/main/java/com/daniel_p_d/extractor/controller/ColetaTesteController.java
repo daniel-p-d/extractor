@@ -29,20 +29,20 @@ public class ColetaTesteController {
     public String executarInfoJobs(@PathVariable Long categoriaId) {
         Categoria categoria = categoriaRepository.findById(categoriaId).orElseThrow();
         executorColetaService.executar(infoJobsScraper, categoria);
-        return "InfoJobs - Coleta iniciada, confira os logs";
+        return "InfoJobs - Coleta iniciada";
     }
 
     @PostMapping("/{categoriaId}/catho")
     public String executarCatho(@PathVariable Long categoriaId) {
         Categoria categoria = categoriaRepository.findById(categoriaId).orElseThrow();
         executorColetaService.executar(cathoScraper, categoria);
-        return "Catho - Coleta iniciada, confira os logs";
+        return "Catho - Coleta iniciada";
     }
 
     @PostMapping("/{categoriaId}/vagascom")
     public String executarvagascom(@PathVariable Long categoriaId) {
         Categoria categoria = categoriaRepository.findById(categoriaId).orElseThrow();
         executorColetaService.executar(vagasComScraper, categoria);
-        return "Vagas.com - Coleta iniciada, confira os logs";
+        return "Vagas.com - Coleta iniciada";
     }
 }

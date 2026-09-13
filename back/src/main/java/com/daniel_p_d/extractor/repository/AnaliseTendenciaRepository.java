@@ -2,6 +2,7 @@ package com.daniel_p_d.extractor.repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -14,4 +15,9 @@ public interface AnaliseTendenciaRepository extends JpaRepository<AnaliseTendenc
 
     boolean existsByHabilidadeIdAndPeriodoReferencia(Long habilidadeId, LocalDate periodoReferencia);
     
+    List<AnaliseTendencia> findByCategoriaIdAndPeriodoReferenciaOrderByQuantidadeMencoesDesc(Long categoriaId, LocalDate periodoReferencia);
+
+    Optional<AnaliseTendencia> findByHabilidadeIdAndCategoriaIdAndPeriodoReferencia(Long habilidadeId, Long categoriaId, LocalDate periodoReferencia);
+
+    List<AnaliseTendencia> findByHabilidadeIdAndCategoriaIdOrderByPeriodoReferenciaDesc(Long habilidadeId, Long categoriaId);
 }
