@@ -1,44 +1,37 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:16.3
-    container_name: vagasbd
+    container_name: vagas-postgres
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: vagas_user
-      POSTGRES_PASSWORD: vagas_pass
       POSTGRES_DB: vagas_db
-    ports:
-      - "5432:5432"
+      POSTGRES_USER: vagas_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
-      - vagasbd-data:/var/lib/postgresql/data
-    networks:
-      - vagas-network
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U vagas_user -d vagas_db"]
       interval: 5s
       timeout: 5s
       retries: 5
 
-  pgadmin:
-    image: dpage/pgadmin4:8.9
-    container_name: pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-    ports:
-      - "15432:80"
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin
-    networks:
-      - vagas-network
+  app:
+    build: .
+    container_name: extractor-app
+    restart: unless-stopped
     depends_on:
-      - postgres
-
-networks:
-  vagas-network:
-    driver: bridge
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DATABASE_URL: jdbc:postgresql://postgres:5432/vagas_db
+      DATABASE_USERNAME: vagas_user
+      DATABASE_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      MAILTRAP_USER: ${MAILTRAP_USER}
+      MAILTRAP_PASS: ${MAILTRAP_PASS}
+    ports:
+      - "8080:8080"
 
 volumes:
-  vagasbd-data:
-  pgadmin-data:
+  postgres_data:

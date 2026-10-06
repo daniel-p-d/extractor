@@ -2,7 +2,7 @@ spring:
   application:
     name: extractor
   profiles:
-    active: dev
+    active: ${SPRING_PROFILES_ACTIVE}
   jpa:
     hibernate:
       ddl-auto: validate
@@ -17,7 +17,7 @@ spring:
     locations: classpath:db/migration
 
 jwt:
-  secret: ${JWT_SECRET:7fK9mQ2xL8vN4pR6sT1wY5zC3bH7jD9e}
+  secret: ${JWT_SECRET}
   expiration-ms: 86400000
 
 habilidades:
