@@ -68,16 +68,19 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource(){
+   @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173")); // porta do front
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "OPTIONS", "DELETE"));
+        config.setAllowedOrigins(List.of(
+            "http://localhost:5173",
+            "http://127.0.0.1:5173"
+        ));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/", config);
+        source.registerCorsConfiguration("/**", config);
         return source;
     }
     
