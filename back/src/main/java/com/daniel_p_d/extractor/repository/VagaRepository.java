@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,7 +20,7 @@ public interface VagaRepository extends JpaRepository<Vaga, Long>{
     boolean existsByUrl(String url);
 
     Optional<Vaga> findByUrl(String url);
-    Page<Vaga> findByStatus(StatusVaga status, Pageable pageable);
+    //Page<Vaga> findByStatus(StatusVaga status, Pageable pageable);
 
     Page<Vaga> findByPortalId(Long portalID, Pageable pageable);
 
@@ -35,4 +36,10 @@ public interface VagaRepository extends JpaRepository<Vaga, Long>{
     long countByPortalIdAndDataPublicacaoBetween(Long portalId, LocalDate inicio, LocalDate fim);
 
     long countByCategoriaIdAndDataPublicacaoBetween(Long categoriaId, LocalDate inicio, LocalDate fim);
+
+    @EntityGraph(attributePaths = {"portal", "empresa", "categoria"})
+    Page<Vaga> findByStatus(StatusVaga status, Pageable pageable);
+    
+    @EntityGraph(attributePaths = {"portal", "empresa", "categoria"})
+    Page<Vaga> findByStatusAndCategoriaId(StatusVaga status, Long categoriaId, Pageable pageable);
 }

@@ -34,10 +34,11 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/coleta/**").permitAll() 
+                .requestMatchers("/coleta/**").hasRole("ADMIN") 
                 .requestMatchers("/alertas/**").authenticated() 
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/analises/**").hasAllRoles("ADMIN")
+                .requestMatchers("/analises/**").authenticated()
+                .requestMatchers("/vagas/**").authenticated()
                 .requestMatchers("/categorias/**").permitAll()
                 .requestMatchers("/preferencias/**").authenticated()
                 .anyRequest().authenticated()
@@ -70,7 +71,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5050")); // mudar depois para a url do front
+        config.setAllowedOrigins(List.of("http://localhost:5173")); // porta do front
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "OPTIONS", "DELETE"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
