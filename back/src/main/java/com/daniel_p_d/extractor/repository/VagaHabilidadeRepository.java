@@ -1,6 +1,7 @@
 package com.daniel_p_d.extractor.repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.daniel_p_d.extractor.model.VagaHabilidade;
+import com.daniel_p_d.extractor.model.Enums.StatusVaga;
 
 public interface VagaHabilidadeRepository extends JpaRepository<VagaHabilidade, Long>{
 
@@ -42,4 +44,16 @@ public interface VagaHabilidadeRepository extends JpaRepository<VagaHabilidade, 
         Long getHabilidadeId();
         Long getQuantidade();
     }
+
+    String FILTRO_VAGA = "vh.vaga.status = :status AND vh.vaga.categoria.id = :categoriaId AND vh.vaga.extraidoEm >= :desde AND vh.vaga.extraidoEm < :ate";
+
+    @Query("SELECT vh.habilidade.nome, COUNT(DISTINCT vh.vaga.id) FROM VagaHabilidade vh WHERE " + FILTRO_VAGA
+        + " GROUP BY vh.habilidade.nome ORDER BY COUNT(DISTINCT vh.vaga.id) DESC")
+    List<Object[]> contarHabilidades(@Param("status") StatusVaga status, @Param("categoriaId") Long categoriaId,
+                                    @Param("desde") LocalDateTime desde, @Param("ate") LocalDateTime ate);
+
+    @Query("SELECT vh.vaga.senioridade, vh.habilidade.nome, COUNT(DISTINCT vh.vaga.id) FROM VagaHabilidade vh WHERE "
+        + FILTRO_VAGA + " GROUP BY vh.vaga.senioridade, vh.habilidade.nome")
+    List<Object[]> contarHabilidadesPorSenioridade(@Param("status") StatusVaga status, @Param("categoriaId") Long categoriaId,
+                                                @Param("desde") LocalDateTime desde, @Param("ate") LocalDateTime ate);
 }

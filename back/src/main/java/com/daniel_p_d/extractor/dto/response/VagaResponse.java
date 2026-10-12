@@ -1,6 +1,7 @@
 package com.daniel_p_d.extractor.dto.response;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public record VagaResponse(
@@ -15,6 +16,7 @@ public record VagaResponse(
     String senioridade,
     String regime,
     LocalDate dataPublicacao,
+    LocalDateTime extraidoEm,
     List<String> habilidades
 ) {
     

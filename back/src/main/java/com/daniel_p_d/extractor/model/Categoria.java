@@ -32,4 +32,8 @@ public class Categoria {
     @Column(nullable = false)
     @Builder.Default
     private Boolean ativa = true;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean padrao = false;
 }

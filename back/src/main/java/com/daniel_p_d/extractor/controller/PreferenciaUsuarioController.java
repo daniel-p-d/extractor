@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.daniel_p_d.extractor.config.security.CustomUserDetails;
+import com.daniel_p_d.extractor.dto.request.CriarPreferenciaPersonalizadaRequest;
 import com.daniel_p_d.extractor.dto.request.CriarPreferenciaRequest;
 import com.daniel_p_d.extractor.dto.response.PreferenciaUsuarioResponse;
 import com.daniel_p_d.extractor.services.PreferenciaUsuarioService;
@@ -42,5 +43,14 @@ public class PreferenciaUsuarioController {
     public ResponseEntity<Void> desativar(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable Long id) {
         preferenciaUsuarioService.desativar(id, userDetails.getUsuario().getId());
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/personalizada")
+    public ResponseEntity<PreferenciaUsuarioResponse> criarPersonalizada(
+        @AuthenticationPrincipal CustomUserDetails userDetails,
+        @Valid @RequestBody CriarPreferenciaPersonalizadaRequest request
+    ) {
+        var response = preferenciaUsuarioService.criarPersonalizada(userDetails.getUsuario(), request.termo());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

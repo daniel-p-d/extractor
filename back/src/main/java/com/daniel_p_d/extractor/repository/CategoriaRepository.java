@@ -18,4 +18,8 @@ public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
         WHERE c.ativa = true AND p.ativa = true
         """)
     List<Categoria> findCategoriasComPreferenciaAtiva();
+
+    Optional<Categoria> findByTermoBusca(String termoBusca);
+
+    List<Categoria> findByAtivaTrueAndPadraoTrue();
 }

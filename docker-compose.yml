@@ -25,6 +25,7 @@ services:
       postgres:
         condition: service_healthy
     environment:
+      JAVA_TOOL_OPTIONS: "-Xmx400m"
       SPRING_PROFILES_ACTIVE: prod
       DATABASE_URL: jdbc:postgresql://postgres:5432/vagas_db
       DATABASE_USERNAME: vagas_user
