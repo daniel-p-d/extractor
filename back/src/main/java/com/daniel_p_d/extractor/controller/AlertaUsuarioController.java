@@ -18,15 +18,19 @@ import com.daniel_p_d.extractor.dto.request.CriarAlertaRequest;
 import com.daniel_p_d.extractor.dto.response.AlertaUsuarioResponse;
 import com.daniel_p_d.extractor.services.AlertaUsuarioService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/alertas")
 @RequiredArgsConstructor
+@Tag(name = "Alertas", description = "Alertas por habilidade (recurso pausado: os e-mails hoje seguem as categorias)")
 public class AlertaUsuarioController {
     private final AlertaUsuarioService alertaUsuarioService;
 
+    @Operation(summary = "Cria um alerta para uma habilidade")
     @PostMapping
     public ResponseEntity<AlertaUsuarioResponse> criar(
         @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -36,6 +40,7 @@ public class AlertaUsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @Operation(summary = "Lista os alertas do usuário")
     @GetMapping
     public ResponseEntity<List<AlertaUsuarioResponse>> listarMeusAlertas(
         @AuthenticationPrincipal CustomUserDetails userDetails
@@ -43,6 +48,7 @@ public class AlertaUsuarioController {
         return ResponseEntity.ok(alertaUsuarioService.listarPorUsuario(userDetails.getUsuario().getId()));
     }
 
+    @Operation(summary = "Desativa um alerta")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> desativar(
         @AuthenticationPrincipal CustomUserDetails userDetails,

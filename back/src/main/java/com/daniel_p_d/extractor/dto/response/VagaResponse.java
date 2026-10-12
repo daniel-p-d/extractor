@@ -4,20 +4,22 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public record VagaResponse(
     Long id,
     String titulo,
-    String url,
-    String empresa,
-    String portal,
+    @Schema(description = "Link da vaga no portal de origem") String url,
+    @Schema(description = "Pode ser nulo ou 'Confidencial'") String empresa,
+    @Schema(description = "Portal de origem", example = "Catho") String portal,
     String categoria,
     String localizacao,
-    String modalidade,
-    String senioridade,
+    @Schema(description = "REMOTO, HIBRIDO, PRESENCIAL ou NAO_ESPECIFICADO") String modalidade,
+    @Schema(description = "Inferida do título; OUTRO quando não identificada") String senioridade,
     String regime,
-    LocalDate dataPublicacao,
-    LocalDateTime extraidoEm,
-    List<String> habilidades
+    @Schema(description = "Data de publicação no portal")  LocalDate dataPublicacao,
+    @Schema(description = "Quando o sistema coletou a vaga") LocalDateTime extraidoEm,
+    @Schema(description = "Tecnologias identificadas na descrição") List<String> habilidades
 ) {
     
 }

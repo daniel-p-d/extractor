@@ -1,8 +1,10 @@
 package com.daniel_p_d.extractor.dto.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public record CategoriaResponse(
     Long id, 
-    String nome
+    @Schema(description = "Nome exibido da categoria", example = "Suporte Técnico") String nome
 ) {
     
 }

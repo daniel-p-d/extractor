@@ -42,6 +42,7 @@ public class SecurityConfig {
                 .requestMatchers("/vagas/**").authenticated()
                 .requestMatchers("/categorias/**").permitAll()
                 .requestMatchers("/preferencias/**").authenticated()
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

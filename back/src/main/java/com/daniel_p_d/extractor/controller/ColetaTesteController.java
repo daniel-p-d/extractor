@@ -12,11 +12,14 @@ import com.daniel_p_d.extractor.scrapper.portais.InfoJobsScraper;
 import com.daniel_p_d.extractor.scrapper.portais.VagasComScraper;
 import com.daniel_p_d.extractor.services.ExecutorColetaService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/coleta")
 @RequiredArgsConstructor
+@Tag(name = "Administração", description = "Disparos manuais (exigem perfil ADMIN)")
 public class ColetaTesteController {
 
     private final ExecutorColetaService executorColetaService;
@@ -25,6 +28,7 @@ public class ColetaTesteController {
     private final VagasComScraper vagasComScraper;
     private final CategoriaRepository categoriaRepository;
 
+    @Operation(summary = "Dispara a coleta manual do InfoJobs")
     @PostMapping("/{categoriaId}/infojobs")
     public String executarInfoJobs(@PathVariable Long categoriaId) {
         Categoria categoria = categoriaRepository.findById(categoriaId).orElseThrow();
@@ -32,6 +36,7 @@ public class ColetaTesteController {
         return "InfoJobs - Coleta iniciada";
     }
 
+    @Operation(summary = "Dispara a coleta manual do Catho")
     @PostMapping("/{categoriaId}/catho")
     public String executarCatho(@PathVariable Long categoriaId) {
         Categoria categoria = categoriaRepository.findById(categoriaId).orElseThrow();
@@ -39,6 +44,7 @@ public class ColetaTesteController {
         return "Catho - Coleta iniciada";
     }
 
+    @Operation(summary = "Dispara a coleta manual do Vagas.com")
     @PostMapping("/{categoriaId}/vagascom")
     public String executarvagascom(@PathVariable Long categoriaId) {
         Categoria categoria = categoriaRepository.findById(categoriaId).orElseThrow();

@@ -38,3 +38,9 @@ logging:
   level:
     com.daniel_p_d.extractor: INFO
     org.hibernate.SQL: WARN
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
