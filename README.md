@@ -18,7 +18,7 @@ Plataforma que coleta vagas de TI em portais de emprego brasileiros, extrai as h
 | `MAILTRAP_USER` e `MAILTRAP_PASS` | Credenciais SMTP para envio de e-mails |
 | Credenciais do banco | Usuário, senha e nome do banco do PostgreSQL |
 
-Os arquivos `.env` não ficam no repositório., crie-os localmente.
+Os arquivos `.env` não ficam no repositório, crie-os localmente.
 
 ### Backend
 
